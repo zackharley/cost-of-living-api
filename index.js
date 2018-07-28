@@ -33,7 +33,7 @@ app.get('/:city', async (req, res) => {
 
     const costs = chunkArray(rows, 3)
         .map(([item, costWithSymbol, range]) => {
-            const cost = costWithSymbol.replace(/^.*?([\d.]+).*?$/, '$1');
+            const cost = costWithSymbol.replace(/^.*?([\d,.]+).*?$/, '$1');
             const [rangeLow, rangeHigh] = range.split('-');
             return {
                 item,
