@@ -11,14 +11,13 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/:city', async (req, res, next) => {
-    const { city } = req.params;
+app.get('/:city', async (req, res) => {
+    const city = req.params.city[0].toUpperCase() + req.params.city.slice(1).toLowerCase();
     const { currency = 'CAD' } = req.query;
 
     const response = await fetch(`https://www.numbeo.com/cost-of-living/in/${city}?displayCurrency=${currency}`);
     if (!response.ok) {
-        console.log(response);
-        return res.status(response.statusCode).send('error');
+        return res.status(response.status).send(response.statusText);
     }
     const html = await response.text();
 
@@ -45,9 +44,12 @@ app.get('/:city', async (req, res, next) => {
                 }
             }
         });
-    return res.send({ city, costs, currency });
-})
-;
+    return res.json({ city, costs, currency });
+});
+
+app.get('*', (req, res) => res.status(400).json({
+    error: 'No city supplied. Please navigate to `/:city` to obtain results.'
+}));
 
 function chunkArray(arr, chunkSize) {
     let temp = [];
@@ -58,4 +60,3 @@ function chunkArray(arr, chunkSize) {
 }
 
 app.listen(PORT, () => console.log(`Cost of Living API running on port ${PORT}`));
-
