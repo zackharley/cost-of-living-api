@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 app.get('/:city', async (req, res) => {
   const city = _.words(_.startCase(req.params.city)).join('-');
-  const { currency = 'CAD' } = req.query;
+  const currency = Object.keys(req.query)[0] ? Object.keys(req.query)[0] : 'CAD';
 
   const response = await fetch(
     `https://www.numbeo.com/cost-of-living/in/${city}?displayCurrency=${currency}`,
